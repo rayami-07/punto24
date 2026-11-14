@@ -22,7 +22,7 @@
    ejemplo      true solo en los ficticios (muestra el aviso de ejemplo).
                 En puestos reales esta línea NO va.
 
-   Para revisar errores y sacar coordenadas: abre /punto24/?revisar=1
+   Para revisar errores y sacar coordenadas: abre rayamipunto24.web.app/?revisar=1
 
    ⚠ LOS 5 DE ABAJO SON FICTICIOS. No existen. Reemplázalos por los
      reales cuando cada vendedor te haya dado su autorización.

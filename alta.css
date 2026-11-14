@@ -21,6 +21,15 @@
 .p24-form input[type="text"], .p24-form input[type="tel"], .p24-form input[type="email"], .p24-form input[type="password"], .p24-form select, .p24-form textarea {
   font: inherit; font-size: 16px; padding: 11px 12px; border: 2px solid var(--ink); border-radius: 10px; background: #fff; width: 100%; }
 .p24-form input:focus, .p24-form select:focus, .p24-form textarea:focus { outline: 3px solid var(--orange); outline-offset: 1px; }
+.p24-prod-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.p24-prod { font: inherit; font-size: 15px; font-weight: 600; padding: 8px 12px; border: 2px solid #ddd8d0; border-radius: 999px; background: #fff; color: var(--ink); cursor: pointer; line-height: 1.2; }
+.p24-prod:hover { border-color: var(--ink); }
+.p24-prod.es-sel { background: var(--orange); border-color: var(--orange); color: #fff; }
+.p24-prod:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.p24-prod-agregar { display: flex; gap: 8px; margin-top: 6px; }
+.p24-prod-agregar input { flex: 1; min-width: 0; }
+.p24-prod-btn { white-space: nowrap; border: 2px solid var(--ink); background: #fff; color: var(--ink); padding: 10px 14px; }
+.p24-prod-resumen { font-size: 13px; color: #5b554e; margin: 2px 0 0; }
 .p24-modos { display: grid; gap: 8px; }
 .p24-modo { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border: 2px solid #ddd8d0; border-radius: 10px; cursor: pointer; }
 .p24-modo:has(input:checked) { border-color: var(--orange); background: var(--orange-wash); }

@@ -52,8 +52,82 @@ export function crearFormulario(cont, opciones) {
   giro.value = CONFIG.giros[v.giro] ? v.giro : "";
   if (!giro.value) { const o = nodo("option", "", "Elige…"); o.value = ""; o.disabled = true; o.selected = true; giro.insertBefore(o, giro.firstChild); }
   campo("¿Qué tipo de puesto es? *", giro);
-  const vende = campo("¿Qué vendes? *", texto("vende", "Ej. tamales de rajas y atole", 80), "Corto, como lo dirías tú.");
-  vende.value = v.vende || "";
+
+  /* Si es "Otros", ¿cuál? (ej. tlacoyos, ropa, flores) */
+  const giroOtro = texto("giroOtro", "Ej. tlacoyos, flores, ropa, reparación de celulares", 40);
+  giroOtro.value = v.giroOtro || "";
+  const cajaOtro = nodo("label", "p24-campo");
+  cajaOtro.appendChild(nodo("span", "p24-etq", "¿Cuál? *"));
+  cajaOtro.appendChild(giroOtro);
+  cajaOtro.appendChild(nodo("small", "p24-ayuda", "Así aparece en el mapa en lugar de \"Otros\"."));
+  f.appendChild(cajaOtro);
+
+  /* ¿Qué vendes? — opciones para tocar (varias) + agregar lo que falte */
+  const vendeSel = []; // en el orden en que los marca
+  const norm = (t) => String(t || "").trim().replace(/\s+/g, " ").replace(/[,;]+/g, "").slice(0, 40);
+  const clave = (t) => norm(t).toLowerCase();
+  String(v.vende || "").split(/\s*[,;]\s*/).map(norm).filter(Boolean).forEach((t) => { if (!vendeSel.some((x) => clave(x) === clave(t))) vendeSel.push(t); });
+  const cajaVende = nodo("div", "p24-campo");
+  cajaVende.appendChild(nodo("span", "p24-etq", "¿Qué vendes? *"));
+  cajaVende.appendChild(nodo("small", "p24-ayuda", "Toca todo lo que vendes (puedes marcar varias). Si falta algo, escríbelo abajo y dale Agregar."));
+  const chipsVende = nodo("div", "p24-prod-chips");
+  chipsVende.setAttribute("role", "group");
+  chipsVende.setAttribute("aria-label", "Lo que vendes");
+  cajaVende.appendChild(chipsVende);
+  const filaAgregar = nodo("div", "p24-prod-agregar");
+  const nuevoProd = texto("nuevoProducto", "Otra cosa que vendes…", 40);
+  nuevoProd.setAttribute("aria-label", "Agregar otra cosa que vendes");
+  const btnAgregar = nodo("button", "btn p24-prod-btn"); btnAgregar.type = "button";
+  btnAgregar.appendChild(nodo("i", "fa-solid fa-plus")); btnAgregar.appendChild(document.createTextNode(" Agregar"));
+  filaAgregar.appendChild(nuevoProd); filaAgregar.appendChild(btnAgregar);
+  cajaVende.appendChild(filaAgregar);
+  const resumenVende = nodo("p", "p24-prod-resumen");
+  resumenVende.setAttribute("aria-live", "polite");
+  cajaVende.appendChild(resumenVende);
+  f.appendChild(cajaVende);
+
+  function opcionesVende() {
+    const g = CONFIG.giros[giro.value];
+    const base = [].concat(g && g.productos ? g.productos : [], CONFIG.productosGenerales || []);
+    const lista = [];
+    base.concat(vendeSel).forEach((t) => { if (!lista.some((x) => clave(x) === clave(t))) lista.push(t); });
+    return lista;
+  }
+  function pintarVende() {
+    chipsVende.innerHTML = "";
+    opcionesVende().forEach((t) => {
+      const marcado = vendeSel.some((x) => clave(x) === clave(t));
+      const b = nodo("button", "p24-prod" + (marcado ? " es-sel" : ""), (marcado ? "✓ " : "") + t);
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(marcado));
+      b.addEventListener("click", () => {
+        const i = vendeSel.findIndex((x) => clave(x) === clave(t));
+        if (i >= 0) vendeSel.splice(i, 1);
+        else if (vendeSel.length >= (CONFIG.maxProductos || 20)) { resumenVende.textContent = "Máximo " + (CONFIG.maxProductos || 20) + " cosas. Quita alguna para agregar otra."; return; }
+        else vendeSel.push(t);
+        pintarVende();
+      });
+      chipsVende.appendChild(b);
+    });
+    resumenVende.textContent = vendeSel.length ? "Marcaste " + vendeSel.length + ": " + vendeSel.join(", ") + "." : "Todavía no marcas nada.";
+  }
+  function agregarProducto() {
+    const t = norm(nuevoProd.value);
+    if (!t) { nuevoProd.focus(); return; }
+    if (!vendeSel.some((x) => clave(x) === clave(t))) {
+      if (vendeSel.length >= (CONFIG.maxProductos || 20)) { resumenVende.textContent = "Máximo " + (CONFIG.maxProductos || 20) + " cosas. Quita alguna para agregar otra."; return; }
+      vendeSel.push(t.charAt(0).toUpperCase() + t.slice(1));
+    }
+    nuevoProd.value = "";
+    pintarVende();
+    nuevoProd.focus();
+  }
+  btnAgregar.addEventListener("click", agregarProducto);
+  nuevoProd.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); agregarProducto(); } });
+  const verOtro = () => { cajaOtro.hidden = giro.value !== "otro"; };
+  giro.addEventListener("change", () => { verOtro(); pintarVende(); });
+  verOtro();
+  pintarVende();
   const nombre = campo("Nombre del puesto (opcional)", texto("nombre", "Ej. Tamales Doña Lupita", 60), "Si lo dejas vacío, en el mapa solo sale el tipo de puesto.");
   nombre.value = v.nombre || "";
 
@@ -188,7 +262,8 @@ export function crearFormulario(cont, opciones) {
     const zona = rZona.checked;
     const problemas = [];
     const d = {
-      giro: giro.value, vende: vende.value.trim(), nombre: nombre.value.trim(),
+      giro: giro.value, giroOtro: giro.value === "otro" ? norm(giroOtro.value) : "",
+      vende: vendeSel.join(", "), nombre: nombre.value.trim(),
       modo: zona ? "zona" : "punto", radio: zona ? Number(f.radio.value) : 0,
       lugar_texto: lugar.value.trim(), horario: horario.value.trim(),
       whatsapp: limpiaTel(wa.value), mostrarWhatsapp: mostrar.checked,
@@ -196,7 +271,10 @@ export function crearFormulario(cont, opciones) {
       lat: estado.lat, lng: estado.lng
     };
     if (!d.giro) problemas.push("Elige qué tipo de puesto es.");
-    if (!d.vende) problemas.push("Escribe qué vendes.");
+    if (d.giro === "otro" && !d.giroOtro) problemas.push("Escribe qué tipo de puesto es (en \"¿Cuál?\").");
+    if (!d.vende) problemas.push("Marca al menos una cosa que vendes (o escríbela y dale Agregar).");
+    else if (d.vende.length > (CONFIG.maxVendeLetras || 300)) problemas.push("La lista de lo que vendes es muy larga; quita algunas cosas.");
+    if (norm(nuevoProd.value)) problemas.push("Escribiste \"" + norm(nuevoProd.value) + "\" pero no le diste Agregar.");
     if (d.lat == null) problemas.push("Marca en el mapa dónde te pones (toca el mapa o usa tu ubicación).");
     else if (d.lat < CAJA.latMin || d.lat > CAJA.latMax || d.lng < CAJA.lngMin || d.lng > CAJA.lngMax) problemas.push("Ese lugar queda fuera de la zona de Punto 24 (Valle de México).");
     if (!d.lugar_texto) problemas.push("Escribe la calle y una referencia.");
@@ -229,6 +307,7 @@ export function crearFormulario(cont, opciones) {
 export function aPublico(s) {
   const p = {
     giro: s.giro, vende: s.vende || "", nombre: s.nombre || "",
+    giroOtro: s.giro === "otro" ? s.giroOtro || "" : "",
     lat: s.lat, lng: s.lng, modo: s.modo,
     lugar_texto: s.lugar_texto || "", horario: s.horario || "",
     whatsapp: s.mostrarWhatsapp && s.whatsapp ? s.whatsapp : "",

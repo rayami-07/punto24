@@ -12,7 +12,7 @@
             ".validate": "newData.isString() && newData.val().length <= 20"
           },
           "vende": {
-            ".validate": "newData.isString() && newData.val().length <= 80"
+            ".validate": "newData.isString() && newData.val().length <= 300"
           },
           "nombre": {
             ".validate": "newData.isString() && newData.val().length <= 60"
@@ -44,7 +44,10 @@
           "$other": {
             ".validate": false
           },
-          ".write": "auth != null && !newData.exists() && root.child('punto24/solicitudes/' + $id + '/uid').val() === auth.uid"
+          ".write": "auth != null && !newData.exists() && root.child('punto24/solicitudes/' + $id + '/uid').val() === auth.uid",
+          "giroOtro": {
+            ".validate": "newData.isString() && newData.val().length <= 40"
+          }
         }
       },
       "solicitudes": {
@@ -63,7 +66,7 @@
             ".validate": "newData.isString() && newData.val().length <= 20"
           },
           "vende": {
-            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 80"
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 300"
           },
           "nombre": {
             ".validate": "newData.isString() && newData.val().length <= 60"
@@ -115,6 +118,9 @@
           },
           "$other": {
             ".validate": false
+          },
+          "giroOtro": {
+            ".validate": "newData.isString() && newData.val().length <= 40"
           }
         }
       },

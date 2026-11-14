@@ -52,12 +52,26 @@ export const CONFIG = {
      salen como un cuadrito vacío en celulares viejos. */
   giroPorDefecto: "otro",
   giros: {
-    tamales: { nombre: "Tamales", icono: "🍲", color: "#c2410c" },
-    elotes:  { nombre: "Elotes",  icono: "🌽", color: "#b45309" },
-    pan:     { nombre: "Pan",     icono: "🥖", color: "#92400e" },
-    camotes: { nombre: "Camotes", icono: "🍠", color: "#7e22ce" },
-    comida:  { nombre: "Comida",  icono: "🌮", color: "#b91c1c" },
-    frutas:  { nombre: "Frutas",  icono: "🍉", color: "#15803d" },
-    otro:    { nombre: "Otros",   icono: "🛒", color: "#475569" }
-  }
+    tamales: { nombre: "Tamales", icono: "🍲", color: "#c2410c",
+      productos: ["Tamales verdes", "Tamales rojos", "Tamales de rajas", "Tamales de mole", "Tamales de dulce", "Tamales oaxaqueños", "Guajolotas", "Atole", "Champurrado", "Café de olla"] },
+    elotes:  { nombre: "Elotes",  icono: "🌽", color: "#b45309",
+      productos: ["Elotes", "Esquites", "Elote asado", "Elote preparado", "Chicharrones preparados", "Papas", "Tostilocos", "Maruchan preparada"] },
+    pan:     { nombre: "Pan",     icono: "🥖", color: "#92400e",
+      productos: ["Pan dulce", "Conchas", "Bolillo", "Teleras", "Donas", "Pasteles", "Gelatinas", "Galletas", "Pay", "Flan"] },
+    camotes: { nombre: "Camotes", icono: "🍠", color: "#7e22ce",
+      productos: ["Camotes", "Plátanos machos", "Plátanos con lechera", "Calabaza en tacha", "Elotes"] },
+    comida:  { nombre: "Comida",  icono: "🌮", color: "#b91c1c",
+      productos: ["Tacos", "Tacos al pastor", "Tacos de canasta", "Quesadillas", "Gorditas", "Tlacoyos", "Sopes", "Huaraches", "Tortas", "Pambazos", "Flautas", "Tamales", "Pozole", "Barbacoa", "Carnitas", "Comida corrida", "Hamburguesas", "Hot dogs", "Pizza", "Alitas"] },
+    frutas:  { nombre: "Frutas",  icono: "🍉", color: "#15803d",
+      productos: ["Fruta picada", "Coctel de frutas", "Jugos", "Licuados", "Aguas frescas", "Raspados", "Nieves", "Paletas", "Jícama y pepino", "Mangos preparados"] },
+    otro:    { nombre: "Otros",   icono: "🛒", color: "#475569",
+      productos: ["Dulces", "Botanas", "Churros", "Hot cakes", "Crepas", "Postres", "Ropa", "Accesorios", "Flores", "Plantas", "Juguetes", "Artesanías", "Reparación de celulares", "Productos de limpieza"] }
+  },
+
+  /* Opciones que se ofrecen a todos los puestos, además de las de su tipo. */
+  productosGenerales: ["Café", "Atole", "Refrescos", "Aguas frescas", "Agua embotellada", "Postres", "Dulces", "Botanas"],
+
+  /* Límites del registro: cuántas cosas puede marcar y cuántas letras en total. */
+  maxProductos: 20,
+  maxVendeLetras: 300
 };

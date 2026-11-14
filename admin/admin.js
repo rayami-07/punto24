@@ -125,18 +125,20 @@ function tarjeta(id, s) {
   const cab = nodo("div", "p24-sol-cab");
   cab.appendChild(nodo("span", "p24-sol-ico", g.icono));
   const t = nodo("div");
-  t.appendChild(nodo("b", "", (s.nombre || g.nombre) + (s.vende ? " · " + s.vende : "")));
+  const tipo = s.giro === "otro" && s.giroOtro ? "Otros: " + s.giroOtro : g.nombre;
+  t.appendChild(nodo("b", "", (s.nombre ? s.nombre + " · " : "") + tipo));
   t.appendChild(nodo("small", "", id + " · " + (s.modo === "zona" ? "zona " + s.radio + " m" : "punto exacto") + " · " + s.estado + (s.uid === auth.currentUser.uid ? " · lo capturaste tú" : "")));
   cab.appendChild(t); li.appendChild(cab);
 
   const dl = nodo("dl", "p24-sol-datos");
   const dato = (k, v) => { if (!v) return; dl.appendChild(nodo("dt", "", k)); dl.appendChild(nodo("dd", "", v)); };
+  dato("Vende", s.vende);
   dato("Lugar", s.lugar_texto); dato("Horario", s.horario);
   dato("WhatsApp", s.whatsapp ? s.whatsapp + (s.mostrarWhatsapp ? " (se muestra)" : " (no se muestra)") : "no dio");
   dato("Contacto privado", s.contacto); dato("Coordenadas", s.lat + ", " + s.lng);
   dato("Creado", fecha(s.creado)); dato("Último cambio", fecha(s.actualizado)); dato("Aprobado", fecha(s.aprobadoEl));
   dato("Notas", s.notasAdmin);
-  if (publico[id]) { const p = publico[id]; const dif = ["giro", "vende", "nombre", "lat", "lng", "modo", "lugar_texto", "horario"].some((k) => String(p[k] ?? "") !== String(s[k] ?? "")) || (p.whatsapp || "") !== (s.mostrarWhatsapp ? s.whatsapp || "" : ""); dato("En el mapa", dif ? "sí, con datos distintos a estos" : "sí, igual que aquí"); }
+  if (publico[id]) { const p = publico[id]; const dif = ["giro", "giroOtro", "vende", "nombre", "lat", "lng", "modo", "lugar_texto", "horario"].some((k) => String(p[k] ?? "") !== String(s[k] ?? "")) || (p.whatsapp || "") !== (s.mostrarWhatsapp ? s.whatsapp || "" : ""); dato("En el mapa", dif ? "sí, con datos distintos a estos" : "sí, igual que aquí"); }
   else if (s.estado === "aprobado") dato("En el mapa", "NO (aprueba de nuevo para publicarlo)");
   li.appendChild(dl);
 

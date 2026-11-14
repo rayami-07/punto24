@@ -113,6 +113,8 @@ function prepararVendedores(crudos) {
       lugar: String(v.lugar_texto || "").trim(),
       horario: String(v.horario || "").trim(),
       vende: String(v.vende || "").trim(),
+      // Si es "Otros", se muestra lo que escribió el vendedor (ej. "Tlacoyos").
+      giroTexto: giroId === "otro" && String(v.giroOtro || "").trim() ? String(v.giroOtro).trim() : CONFIG.giros[giroId].nombre,
       tel, fecha, vencido, ejemplo: v.ejemplo === true
     });
   });
@@ -175,7 +177,7 @@ async function iniciar() {
   }
 
   lista.forEach((v) => {
-    const titulo = v.giro.nombre + (v.nombre ? ": " + v.nombre : "") + (v.modo === "zona" ? " (zona aproximada)" : "");
+    const titulo = v.giroTexto + (v.nombre ? ": " + v.nombre : "") + (v.modo === "zona" ? " (zona aproximada)" : "");
     const grupo = L.featureGroup();
     if (v.modo === "zona") {
       L.circle([v.lat, v.lng], {
@@ -226,8 +228,8 @@ async function iniciar() {
     const ico = nodo("span", "p24-t-ico", v.giro.icono);
     ico.style.setProperty("--c", v.giro.color);
     const tit = nodo("div", "p24-t-tit");
-    if (v.nombre) tit.appendChild(nodo("small", "", v.giro.nombre));
-    tit.appendChild(nodo("h3", "", v.nombre || v.giro.nombre));
+    if (v.nombre) tit.appendChild(nodo("small", "", v.giroTexto));
+    tit.appendChild(nodo("h3", "", v.nombre || v.giroTexto));
     const x = nodo("button", "p24-t-x", "×");
     x.type = "button";
     x.setAttribute("aria-label", "Cerrar");
@@ -249,7 +251,7 @@ async function iniciar() {
     };
     const notaZona = v.modo === "zona" ? "Zona aproximada: anda por esta área (radio de " + v.radio + " m)." : "";
     if (v.lugar || notaZona) fila("fa-solid fa-location-dot", v.lugar || "Zona aproximada", v.lugar ? notaZona : "Anda por esta área (radio de " + v.radio + " m).");
-    if (v.vende) fila("fa-solid fa-basket-shopping", v.vende);
+    if (v.vende) fila("fa-solid fa-basket-shopping", "Vende: " + v.vende);
     if (v.horario) fila("fa-regular fa-clock", v.horario);
     fila("fa-regular fa-calendar-check", "Actualizado: " + (v.fecha ? fechaBonita(v.fecha) : "sin fecha"));
     tarjeta.appendChild(datos);

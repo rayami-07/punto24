@@ -6,7 +6,7 @@
 ============================================================ */
 import { CONFIG } from "../config.js";
 import { crearFormulario, aPublico, nuevoId } from "../formulario.js";
-import { db, auth, RUTAS, ref, get, set, update, remove, onValue, serverTimestamp, signInWithEmailAndPassword, signOut, sesionActual, esAdmin, textoError } from "../fb.js";
+import { db, auth, RUTAS, ref, get, set, update, remove, onValue, serverTimestamp, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, sesionActual, esAdmin, esCorreoAdmin, ADMIN_EMAIL, textoError } from "../fb.js";
 
 const $ = (id) => document.getElementById(id);
 const nodo = (tag, clase, texto) => { const n = document.createElement(tag); if (clase) n.className = clase; if (texto != null) n.textContent = texto; return n; };
@@ -18,22 +18,66 @@ let solicitudes = {}, publico = {}, offS = null, offP = null;
 
 async function iniciar() {
   const user = await sesionActual();
-  if (esAdmin(user)) return panel(user);
+  if (esCorreoAdmin(user)) {
+    try { await user.reload(); } catch (e) {}
+    if (esAdmin(auth.currentUser)) return panel(auth.currentUser);
+    login(); return pedirVerificacion(auth.currentUser);
+  }
   if (user) await signOut(auth); // sesión anónima u otra cuenta: fuera
   login();
 }
 
 function login() {
   $("p24-login").hidden = false; $("p24-panel").hidden = true;
-  const f = $("p24-login-form"), err = $("p24-login-err");
-  f.addEventListener("submit", async (e) => {
-    e.preventDefault(); err.hidden = true;
+  const f = $("p24-login-form"), err = $("p24-login-err"), info = $("p24-login-info");
+  const mostrar = (t, error) => { err.hidden = true; info.hidden = true; const el = error ? err : info; el.textContent = t; el.hidden = !t; };
+  const correo = () => f.correo.value.trim().toLowerCase();
+  f.onsubmit = async (e) => {
+    e.preventDefault(); mostrar("");
     try {
-      const cred = await signInWithEmailAndPassword(auth, f.correo.value.trim(), f.clave.value);
-      if (!esAdmin(cred.user)) { await signOut(auth); throw { code: "auth/invalid-credential" }; }
+      const cred = await signInWithEmailAndPassword(auth, correo(), f.clave.value);
+      if (!esCorreoAdmin(cred.user)) { await signOut(auth); throw { code: "auth/invalid-credential" }; }
+      if (!cred.user.emailVerified) return pedirVerificacion(cred.user);
       panel(cred.user);
-    } catch (e2) { err.textContent = textoError(e2); err.hidden = false; }
-  });
+    } catch (e2) { mostrar(textoError(e2), true); }
+  };
+  $("p24-crear").onclick = async () => {
+    mostrar("");
+    if (correo() !== ADMIN_EMAIL) return mostrar("Solo el correo de administrador de RAYAMI Store puede crear cuenta aquí.", true);
+    if (f.clave.value.length < 6) return mostrar("Escribe la contraseña que quieres usar (mínimo 6 caracteres) y vuelve a tocar \"Crear mi cuenta\".", true);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, correo(), f.clave.value);
+      await sendEmailVerification(cred.user);
+      pedirVerificacion(cred.user, true);
+    } catch (e2) { mostrar(textoError(e2), true); }
+  };
+  $("p24-olvide").onclick = async () => {
+    mostrar("");
+    if (!correo()) return mostrar("Escribe tu correo arriba y vuelve a tocar \"Olvidé mi contraseña\".", true);
+    try { await sendPasswordResetEmail(auth, correo()); mostrar("Te mandamos un correo para cambiar tu contraseña. Revisa también spam.", false); }
+    catch (e2) { mostrar(textoError(e2), true); }
+  };
+}
+
+/* El panel solo abre con el correo verificado (las reglas lo exigen). */
+function pedirVerificacion(user, recienCreada) {
+  const info = $("p24-login-info"), err = $("p24-login-err");
+  err.hidden = true;
+  info.hidden = false;
+  info.innerHTML = "";
+  info.appendChild(nodo("b", "", recienCreada ? "Cuenta creada. Falta verificar tu correo." : "Falta verificar tu correo."));
+  info.appendChild(nodo("span", "", " Te mandamos un correo a " + user.email + " (revisa también spam). Abre el enlace y luego toca \"Ya lo verifiqué\". "));
+  const listo = nodo("button", "btn es-ok", "Ya lo verifiqué"); listo.type = "button";
+  const reenviar = nodo("button", "btn", "Reenviar correo"); reenviar.type = "button";
+  info.appendChild(listo); info.appendChild(reenviar);
+  listo.onclick = async () => {
+    try { await user.reload(); await user.getIdToken(true); } catch (e) {}
+    if (esAdmin(auth.currentUser)) panel(auth.currentUser);
+    else { err.textContent = "Todavía no aparece verificado. Abre el enlace del correo y vuelve a intentar."; err.hidden = false; }
+  };
+  reenviar.onclick = async () => {
+    try { await sendEmailVerification(user); reenviar.textContent = "Enviado"; } catch (e) { err.textContent = textoError(e); err.hidden = false; }
+  };
 }
 
 function panel(user) {

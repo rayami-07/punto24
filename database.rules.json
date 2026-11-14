@@ -1,0 +1,130 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "punto24": {
+      "publico": {
+        ".read": true,
+        ".write": "auth != null && (auth.token.email === 'raulbenitez563@gmail.com' && auth.token.email_verified === true)",
+        "$id": {
+          ".validate": "!newData.exists() || ($id.matches(/^[a-z0-9-]{3,40}$/) && newData.hasChildren(['giro', 'lat', 'lng', 'modo', 'actualizado']))",
+          "giro": {
+            ".validate": "newData.isString() && newData.val().length <= 20"
+          },
+          "vende": {
+            ".validate": "newData.isString() && newData.val().length <= 80"
+          },
+          "nombre": {
+            ".validate": "newData.isString() && newData.val().length <= 60"
+          },
+          "lat": {
+            ".validate": "newData.isNumber() && newData.val() >= 19.2 && newData.val() <= 20.1"
+          },
+          "lng": {
+            ".validate": "newData.isNumber() && newData.val() >= -99.7 && newData.val() <= -98.7"
+          },
+          "modo": {
+            ".validate": "newData.val() === 'punto' || newData.val() === 'zona'"
+          },
+          "radio": {
+            ".validate": "newData.isNumber() && newData.val() >= 50 && newData.val() <= 3000"
+          },
+          "lugar_texto": {
+            ".validate": "newData.isString() && newData.val().length <= 120"
+          },
+          "horario": {
+            ".validate": "newData.isString() && newData.val().length <= 120"
+          },
+          "whatsapp": {
+            ".validate": "newData.isString() && newData.val().matches(/^([0-9]{10})?$/)"
+          },
+          "actualizado": {
+            ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)"
+          },
+          "$other": {
+            ".validate": false
+          },
+          ".write": "auth != null && !newData.exists() && root.child('punto24/solicitudes/' + $id + '/uid').val() === auth.uid"
+        }
+      },
+      "solicitudes": {
+        ".read": "auth != null && (auth.token.email === 'raulbenitez563@gmail.com' && auth.token.email_verified === true)",
+        "$id": {
+          ".read": "auth != null && ((auth.token.email === 'raulbenitez563@gmail.com' && auth.token.email_verified === true) || data.child('uid').val() === auth.uid)",
+          ".write": "auth != null && ((auth.token.email === 'raulbenitez563@gmail.com' && auth.token.email_verified === true) || (newData.exists() && newData.child('uid').val() === auth.uid && (data.exists() ? data.child('uid').val() === auth.uid : !root.child('punto24/porUid/' + auth.uid).exists()) && (newData.child('estado').val() === 'pendiente' || newData.child('estado').val() === 'retirado')))",
+          ".validate": "$id.matches(/^[a-z0-9-]{3,40}$/) && newData.hasChildren(['uid', 'estado', 'giro', 'vende', 'lat', 'lng', 'modo', 'lugar_texto', 'horario', 'contacto', 'acepto', 'creado', 'actualizado'])",
+          "uid": {
+            ".validate": "newData.isString() && (!data.exists() || data.val() === newData.val())"
+          },
+          "estado": {
+            ".validate": "newData.val() === 'pendiente' || newData.val() === 'aprobado' || newData.val() === 'rechazado' || newData.val() === 'retirado'"
+          },
+          "giro": {
+            ".validate": "newData.isString() && newData.val().length <= 20"
+          },
+          "vende": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 80"
+          },
+          "nombre": {
+            ".validate": "newData.isString() && newData.val().length <= 60"
+          },
+          "lat": {
+            ".validate": "newData.isNumber() && newData.val() >= 19.2 && newData.val() <= 20.1"
+          },
+          "lng": {
+            ".validate": "newData.isNumber() && newData.val() >= -99.7 && newData.val() <= -98.7"
+          },
+          "modo": {
+            ".validate": "newData.val() === 'punto' || newData.val() === 'zona'"
+          },
+          "radio": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 3000"
+          },
+          "lugar_texto": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 120"
+          },
+          "horario": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 120"
+          },
+          "whatsapp": {
+            ".validate": "newData.isString() && newData.val().matches(/^([0-9]{10})?$/)"
+          },
+          "mostrarWhatsapp": {
+            ".validate": "newData.isBoolean()"
+          },
+          "contacto": {
+            ".validate": "newData.isString() && newData.val().matches(/^[0-9]{10}$/)"
+          },
+          "acepto": {
+            ".validate": "newData.val() === true"
+          },
+          "aceptoTs": {
+            ".validate": "newData.isNumber()"
+          },
+          "creado": {
+            ".validate": "newData.isNumber() && (!data.exists() || data.val() === newData.val())"
+          },
+          "actualizado": {
+            ".validate": "newData.isNumber()"
+          },
+          "notasAdmin": {
+            ".validate": "newData.isString() && newData.val().length <= 500 && ((auth.token.email === 'raulbenitez563@gmail.com' && auth.token.email_verified === true) || data.val() === newData.val())"
+          },
+          "aprobadoEl": {
+            ".validate": "newData.isNumber() && ((auth.token.email === 'raulbenitez563@gmail.com' && auth.token.email_verified === true) || data.val() === newData.val())"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "porUid": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || (auth.token.email === 'raulbenitez563@gmail.com' && auth.token.email_verified === true))",
+          ".write": "auth != null && ((auth.token.email === 'raulbenitez563@gmail.com' && auth.token.email_verified === true) || (auth.uid === $uid && !data.exists()))",
+          ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9-]{3,40}$/)"
+        }
+      }
+    }
+  }
+}

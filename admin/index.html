@@ -50,7 +50,12 @@
         <label class="p24-campo"><span class="p24-etq">Correo</span><input type="email" name="correo" autocomplete="username" required /></label>
         <label class="p24-campo"><span class="p24-etq">Contraseña</span><input type="password" name="clave" autocomplete="current-password" required /></label>
         <p class="p24-errores" id="p24-login-err" hidden></p>
-        <button class="btn p24-f-guardar" type="submit">Entrar</button>
+        <div class="p24-msg" id="p24-login-info" hidden></div>
+        <div class="p24-f-acciones">
+          <button class="btn p24-f-guardar" type="submit">Entrar</button>
+          <button class="btn" id="p24-crear" type="button">Crear mi cuenta (primera vez)</button>
+          <button class="btn" id="p24-olvide" type="button">Olvidé mi contraseña</button>
+        </div>
       </form>
     </section>
     <section id="p24-panel" hidden>
@@ -93,6 +98,6 @@
 </script>
 <!-- Leaflet (la librería del mapa) va copiada en este repo: no depende de servidores externos -->
 <script src="../leaflet/leaflet.js" defer></script>
-<script type="module" src="admin.js?v=1"></script>
+<script type="module" src="admin.js?v=2"></script>
 </body>
 </html>

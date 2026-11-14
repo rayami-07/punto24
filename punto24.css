@@ -101,7 +101,8 @@
 .p24-alta-in { display: grid; gap: 16px; }
 .p24-alta h2 { font-size: clamp(27px, 6.2vw, 40px); line-height: 1; }
 .p24-alta p { margin-top: 8px; color: #4b453f; font-size: 16px; max-width: 54ch; }
-.p24-alta .btn { justify-self: start; }
+.p24-alta-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.p24-alta-reg { background: var(--orange); color: #fff; }
 
 /* ---------- Modo revisión (?revisar=1) ---------- */
 .p24-revisar { margin: 16px 20px 0; padding: 14px 16px; border: 2px dashed var(--orange); border-radius: 12px; background: #fff; font-size: 14px; line-height: 1.45; }
@@ -125,7 +126,7 @@
   .p24-revisar { margin-left: 0; margin-right: 0; }
   .p24-alta { margin-top: 44px; padding-block: 44px; }
   .p24-alta-in { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 32px; }
-  .p24-alta .btn { justify-self: end; }
+  .p24-alta-btns { justify-content: flex-end; }
 }
 @media (prefers-reduced-motion: reduce) {
   .p24-tarjeta { animation: none; }

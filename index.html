@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="site.css?v=5" />
   <link rel="stylesheet" href="leaflet/leaflet.css" />
-  <link rel="stylesheet" href="punto24.css?v=2" />
+  <link rel="stylesheet" href="punto24.css?v=3" />
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-GR83B3NZX9"></script>
   <script>
@@ -43,7 +43,7 @@
 <main>
   <div class="wrap p24-cab">
     <h1>Punto <span>24</span></h1>
-    <p class="lede">Puestos y negocios locales de Cuautitlán Izcalli: qué hay cerca de ti y a qué hora. <a class="p24-ir-alta" href="#p24-alta">¿Tienes un puesto? Regístrate gratis <i class="fa-solid fa-arrow-down"></i></a></p>
+    <p class="lede">Puestos y negocios locales de Cuautitlán Izcalli: qué hay cerca de ti y a qué hora. <a class="p24-ir-alta" href="registro/">¿Tienes un puesto? Regístrate gratis <i class="fa-solid fa-arrow-right"></i></a></p>
     <p class="p24-demo" id="p24-demo" hidden><b>Mapa de demostración.</b> Los puestos que ves son ejemplos y no existen.</p>
   </div>
 
@@ -68,14 +68,17 @@
     <div class="wrap p24-alta-in">
       <div>
         <h2>¿Tienes un puesto o negocio? Aparece gratis en Punto 24</h2>
-        <p>Mándanos tus datos por WhatsApp y nosotros te subimos al mapa. Tú decides qué se muestra y puedes pedir que te quitemos cuando quieras. Si no tienes WhatsApp, díselo a quien te dio este mapa y te registramos en persona.</p>
+        <p>Regístrate tú mismo en 3 minutos: tú decides qué se muestra y puedes cambiarlo o retirarte cuando quieras. RAYAMI Store lo revisa antes de publicarlo. Si prefieres, mándanos tus datos por WhatsApp y te subimos nosotros.</p>
       </div>
-      <a class="btn btn-wa wa-link" id="p24-alta-btn" data-msg="Hola, quiero aparecer gratis en Punto 24. Mis datos:
-Qué vendo:
-Dónde me pongo (calle y referencia):
-Días y horario:
-Nombre del puesto (opcional):
-¿Mostrar mi WhatsApp en el mapa? (sí / no): "><i class="fa-brands fa-whatsapp"></i> Quiero aparecer</a>
+      <div class="p24-alta-btns">
+        <a class="btn p24-alta-reg" id="p24-alta-btn" href="registro/"><i class="fa-solid fa-pen-to-square"></i> Registrar mi puesto</a>
+        <a class="btn btn-wa wa-link" id="p24-alta-wa" data-msg="Hola, quiero aparecer gratis en Punto 24. Mis datos:
+Qué vendo: 
+Dónde me pongo (calle y referencia): 
+Días y horario: 
+Nombre del puesto (opcional): 
+¿Mostrar mi WhatsApp en el mapa? (sí / no): "><i class="fa-brands fa-whatsapp"></i> Por WhatsApp</a>
+      </div>
     </div>
   </div>
 </main><footer class="wrap">
@@ -106,6 +109,6 @@ Nombre del puesto (opcional):
 </script>
 <!-- Leaflet (la librería del mapa) va copiada en este repo: no depende de servidores externos -->
 <script src="leaflet/leaflet.js" defer></script>
-<script type="module" src="mapa.js?v=1"></script>
+<script type="module" src="mapa.js?v=2"></script>
 </body>
 </html>

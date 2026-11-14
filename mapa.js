@@ -112,6 +112,7 @@ function prepararVendedores(crudos) {
       lat: v.lat, lng: v.lng, modo: v.modo, radio,
       lugar: String(v.lugar_texto || "").trim(),
       horario: String(v.horario || "").trim(),
+      vende: String(v.vende || "").trim(),
       tel, fecha, vencido, ejemplo: v.ejemplo === true
     });
   });
@@ -136,9 +137,22 @@ async function iniciar() {
   lienzo.addEventListener("mouseleave", () => mapa.scrollWheelZoom.disable());
 
   /* 4.2 Puestos */
-  let crudos = [], errorCarga = "";
-  try { crudos = (await import("./vendedores.js")).VENDEDORES; }
-  catch (e) { errorCarga = (e && e.message) || String(e); }
+  // Primero la base (puestos aprobados en el panel); si no hay nada, vendedores.js.
+  let crudos = [], errorCarga = "", desdeBase = false;
+  if (CONFIG.fuente && CONFIG.fuente.url) {
+    try {
+      const r = await fetch(CONFIG.fuente.url, { cache: "no-store" });
+      const d = r.ok ? await r.json() : null;
+      if (d && typeof d === "object") {
+        const arr = Object.keys(d).map((k) => Object.assign({ id: k, activo: true }, d[k]));
+        if (arr.length) { crudos = arr; desdeBase = true; }
+      }
+    } catch (e) { /* sin red o sin reglas publicadas: se sigue con vendedores.js */ }
+  }
+  if (!desdeBase) {
+    try { crudos = (await import("./vendedores.js")).VENDEDORES; }
+    catch (e) { errorCarga = (e && e.message) || String(e); }
+  }
   const prep = errorCarga ? { lista: [], problemas: [], ocultos: [] } : prepararVendedores(crudos);
   const lista = prep.lista;
 
@@ -235,6 +249,7 @@ async function iniciar() {
     };
     const notaZona = v.modo === "zona" ? "Zona aproximada: anda por esta área (radio de " + v.radio + " m)." : "";
     if (v.lugar || notaZona) fila("fa-solid fa-location-dot", v.lugar || "Zona aproximada", v.lugar ? notaZona : "Anda por esta área (radio de " + v.radio + " m).");
+    if (v.vende) fila("fa-solid fa-basket-shopping", v.vende);
     if (v.horario) fila("fa-regular fa-clock", v.horario);
     fila("fa-regular fa-calendar-check", "Actualizado: " + (v.fecha ? fechaBonita(v.fecha) : "sin fecha"));
     tarjeta.appendChild(datos);
@@ -370,8 +385,10 @@ async function iniciar() {
   });
 
   /* 4.6 Ganchos a RAYAMI Store */
-  const alta = $("p24-alta-btn");
-  if (alta) alta.addEventListener("click", () => evento("clic_rayami_cta", { lugar: "alta" }));
+  const alta = $("p24-alta-btn"), altaWa = $("p24-alta-wa");
+  if (alta) alta.addEventListener("click", () => evento("clic_rayami_cta", { lugar: "alta", medio: "registro" }));
+  if (altaWa) altaWa.addEventListener("click", () => evento("clic_rayami_cta", { lugar: "alta", medio: "whatsapp" }));
+  document.querySelectorAll(".p24-ir-alta").forEach((a) => a.addEventListener("click", () => evento("clic_rayami_cta", { lugar: "arriba", medio: "registro" })));
 
   /* 4.7 Modo revisión (/?revisar=1): ayuda para quien edita vendedores.js */
   if (REVISAR) {
@@ -379,6 +396,7 @@ async function iniciar() {
     caja.hidden = false;
     caja.appendChild(nodo("h2", "", "Modo revisión"));
     caja.appendChild(nodo("p", "", "Solo tú ves esto (por el ?revisar=1 de la dirección). Toca cualquier punto del mapa para ver sus coordenadas."));
+    caja.appendChild(nodo("p", "", desdeBase ? "Los puestos vienen de la base (aprobados en /admin/)." : "Los puestos vienen de vendedores.js (la base está vacía o no respondió)."));
     const ul = nodo("ul");
     if (errorCarga) ul.appendChild(nodo("li", "es-error", "vendedores.js tiene un error de escritura y no se pudo leer: " + errorCarga + ". Casi siempre es una coma, una comilla o una llave que falta."));
     prep.problemas.forEach((t) => ul.appendChild(nodo("li", "es-error", t)));

@@ -15,6 +15,14 @@ export const CONFIG = {
     zoomMax: 19
   },
 
+  /* FUENTE DE LOS PUESTOS: la base de Firebase (solo los aprobados desde el
+     panel /admin/). Se lee por una URL pública, sin login. Si falla o está
+     vacía, el mapa usa vendedores.js (los ejemplos). Pon url: "" para
+     volver a usar solo vendedores.js. */
+  fuente: {
+    url: "https://rayami-store-default-rtdb.firebaseio.com/punto24/publico.json"
+  },
+
   /* Vista inicial (solo se usa si no hay puestos que mostrar). */
   centro: [19.6439, -99.2160], // Cuautitlán Izcalli
   zoomInicial: 13,

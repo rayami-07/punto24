@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Punto 24 · Puestos y negocios cerca de ti en Cuautitlán Izcalli</title>
+  <meta name="description" content="Punto 24: mapa de puestos y pequeños negocios de Cuautitlán Izcalli. Mira qué hay cerca de ti y a qué hora." />
+  <!-- Prueba piloto: no se indexa en buscadores -->
+  <meta name="robots" content="noindex" />
+  <meta property="og:title" content="Punto 24 · Puestos y negocios cerca de ti" />
+  <meta property="og:description" content="Mapa de puestos y pequeños negocios de Cuautitlán Izcalli: qué hay cerca y a qué hora." />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="site.css?v=5" />
+  <link rel="stylesheet" href="leaflet/leaflet.css" />
+  <link rel="stylesheet" href="punto24.css?v=1" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GR83B3NZX9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-GR83B3NZX9');
+    gtag('config', 'AW-18059855370');
+  </script>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="https://rayamistore.com/">RAYAMI <span>Store</span></a>
+    <nav class="nav-links" id="mnav" aria-label="Secciones">
+      <a href="https://rayamistore.com/">Inicio</a>
+      <div class="has-sub"><button class="sub-btn" type="button" aria-expanded="false">Servicios</button><div class="sub"><a href="https://rayamistore.com/servicios/pagina-web/"><i class="fa-solid fa-globe"></i>Página web o catálogo</a><a href="https://rayamistore.com/servicios/pedidos-whatsapp/"><i class="fa-brands fa-whatsapp"></i>Pedidos por WhatsApp</a><a href="https://rayamistore.com/servicios/qr/"><i class="fa-solid fa-qrcode"></i>Código QR</a><a href="https://rayamistore.com/servicios/perfil-google/"><i class="fa-brands fa-google"></i>Perfil de Google</a><a href="https://rayamistore.com/servicios/anuncios-google/"><i class="fa-solid fa-bullhorn"></i>Anuncios en Google</a><a href="https://rayamistore.com/leads-y-crm/"><i class="fa-solid fa-address-book"></i>Leads y CRM</a><a href="https://rayamistore.com/analisis/"><i class="fa-solid fa-chart-line"></i>Análisis</a><a href="https://rayamistore.com/servicios/inventario/"><i class="fa-solid fa-boxes-stacked"></i>Control de inventario</a><a href="https://rayamistore.com/servicios/punto-de-venta/"><i class="fa-solid fa-cash-register"></i>Punto de venta<small>pronto</small></a><a href="https://rayamistore.com/servicios/clientes-frecuentes/"><i class="fa-solid fa-heart"></i>Clientes frecuentes</a><a href="https://rayamistore.com/servicios/finanzas/"><i class="fa-solid fa-calculator"></i>Finanzas</a><a href="https://rayamistore.com/servicios/cursos-excel/"><i class="fa-solid fa-graduation-cap"></i>Cursos de Excel<small>pronto</small></a><a class="all" href="https://rayamistore.com/servicios/">Ver todos los servicios →</a></div></div>
+      <a href="https://rayamistore.com/por-que/">¿Por qué usarlo?</a><a href="https://rayamistore.com/preguntas/">Preguntas</a><a href="https://rayamistore.com/precios/">Precios</a><a href="https://rayamistore.com/recursos/">Recursos</a><a href="https://rayamistore.com/nosotros/">Nosotros</a>
+    </nav>
+    <a class="btn btn-wa wa-link" data-msg="Hola, quiero una muestra gratis de mi tienda en línea"><i class="fa-brands fa-whatsapp"></i> Pide tu muestra</a>
+    <button class="burger" type="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<main>
+  <div class="wrap p24-cab">
+    <h1>Punto <span>24</span></h1>
+    <p class="lede">Puestos y negocios locales de Cuautitlán Izcalli: qué hay cerca de ti y a qué hora.</p>
+    <p class="p24-demo" id="p24-demo" hidden><b>Mapa de demostración.</b> Los puestos que ves son ejemplos y no existen.</p>
+  </div>
+
+  <div class="p24-marco">
+    <div class="p24-chips" id="p24-chips" role="group" aria-label="Filtrar por giro"></div>
+
+    <div class="p24-lienzo">
+      <div id="p24-mapa" aria-label="Mapa de puestos de Punto 24"></div>
+      <button class="p24-cerca" id="p24-cerca" type="button"><i class="fa-solid fa-location-crosshairs"></i> Cerca de mí</button>
+      <p class="p24-aviso" id="p24-aviso" role="status" hidden></p>
+      <aside class="p24-tarjeta" id="p24-tarjeta" aria-label="Datos del puesto" aria-live="polite" hidden></aside>
+    </div>
+    <noscript><p class="p24-nota">Para ver el mapa necesitas activar JavaScript en tu navegador.</p></noscript>
+
+    <p class="p24-conteo" id="p24-conteo"></p>
+    <p class="p24-nota"><i class="fa-solid fa-circle-info"></i> Punto 24 solo muestra dónde están los puestos; RAYAMI Store no vende ni garantiza los productos.</p>
+
+    <div class="p24-revisar" id="p24-revisar" hidden></div>
+  </div>
+
+  <div class="p24-alta">
+    <div class="wrap p24-alta-in">
+      <div>
+        <h2>¿Tienes un puesto o negocio? Aparece gratis en Punto 24</h2>
+        <p>Tú decides qué datos se muestran y puedes pedir que te quitemos cuando quieras.</p>
+      </div>
+      <a class="btn btn-wa wa-link" id="p24-alta-btn" data-msg="Hola, tengo un puesto o negocio y quiero aparecer gratis en Punto 24. Mi giro es: "><i class="fa-brands fa-whatsapp"></i> Quiero aparecer</a>
+    </div>
+  </div>
+</main><footer class="wrap">
+  <div class="foot-in">
+    <span>Punto 24 · Una iniciativa de RAYAMI Store</span>
+    <span>© 2026 RAYAMI Store</span>
+    <span>WhatsApp: 55 8107 4978</span>
+    <a href="https://rayamistore.com/nosotros/">Nosotros</a>
+    <a href="https://rayamistore.com/recursos/">Recursos</a>
+    <a href="https://rayamistore.com/privacidad/">Aviso de privacidad</a>
+  </div>
+</footer>
+<script>
+  const WA = "525581074978";
+  document.querySelectorAll(".wa-link").forEach((a) => {
+    a.href = `https://api.whatsapp.com/send?phone=${WA}&text=${encodeURIComponent(a.dataset.msg || "")}`;
+    a.target = "_blank"; a.rel = "noopener";
+  });
+
+  (function () {
+    const nav = document.querySelector(".nav"), burger = document.querySelector(".burger");
+    const closeAll = () => { nav.classList.remove("open"); burger.setAttribute("aria-expanded", "false"); document.querySelectorAll(".has-sub").forEach((h) => { h.classList.remove("open"); h.querySelector(".sub-btn").setAttribute("aria-expanded", "false"); }); };
+    burger.addEventListener("click", () => { const o = !nav.classList.contains("open"); closeAll(); if (o) { nav.classList.add("open"); burger.setAttribute("aria-expanded", "true"); } });
+    document.querySelectorAll(".sub-btn").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); const h = b.parentElement, o = !h.classList.contains("open"); document.querySelectorAll(".has-sub").forEach((x) => x.classList.remove("open")); if (o) h.classList.add("open"); b.setAttribute("aria-expanded", String(o)); }));
+    document.addEventListener("click", (e) => { if (!e.target.closest(".has-sub")) document.querySelectorAll(".has-sub").forEach((h) => h.classList.remove("open")); });
+    addEventListener("keydown", (e) => { if (e.key === "Escape") closeAll(); });
+  })();
+</script>
+<!-- Leaflet (la librería del mapa) va copiada en este repo: no depende de servidores externos -->
+<script src="leaflet/leaflet.js" defer></script>
+<script type="module" src="mapa.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+/* ============================================================
+   PUNTO 24 — estilos propios del mapa
+   Primero celular (se abre casi siempre desde un QR); más abajo,
+   los ajustes para pantallas anchas.
+   Colores y tipografías vienen de site.css (variables --orange, --ink…).
+============================================================ */
+
+/* ---------- Encabezado compacto: el mapa debe verse sin bajar ---------- */
+.p24-cab { padding-top: 18px; padding-bottom: 12px; }
+.p24-cab h1 { font-family: var(--display); font-weight: 900; text-transform: uppercase; font-size: clamp(42px, 10vw, 76px); line-height: .88; letter-spacing: -.5px; }
+.p24-cab h1 span { color: var(--orange); }
+.p24-cab .lede { margin-top: 8px; font-size: 16px; line-height: 1.4; }
+.p24-demo { margin-top: 12px; background: var(--orange-wash); border-left: 4px solid var(--orange); border-radius: 6px; padding: 9px 12px; font-size: 14px; line-height: 1.4; }
+.p24-demo[hidden] { display: none; }
+
+.p24-marco { max-width: 1160px; margin: 0 auto; }
+
+/* ---------- Filtro por giro ---------- */
+.p24-chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px max(20px, env(safe-area-inset-right)) 12px max(20px, env(safe-area-inset-left)); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.p24-chips::-webkit-scrollbar { display: none; }
+.p24-chips[hidden] { display: none; }
+.p24-chip { flex: none; display: inline-flex; align-items: center; gap: 7px; height: 42px; padding: 0 15px; border-radius: 100px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.p24-chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.p24-chip-ico { font-size: 17px; line-height: 1; }
+
+/* ---------- Lienzo del mapa ----------
+   isolation: los niveles (z-index) de Leaflet llegan a 1000; sin esto
+   el mapa taparía el menú fijo del sitio. */
+.p24-lienzo { position: relative; isolation: isolate; height: 62vh; height: clamp(380px, 62svh, 620px); background: #ecebe7; overflow: hidden; }
+#p24-mapa { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
+#p24-mapa.p24-sin-mapa { display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+.leaflet-container { font-family: var(--body); background: #ecebe7; }
+.leaflet-container a { color: var(--orange-deep); }
+.leaflet-bar a { color: var(--ink); width: 38px; height: 38px; line-height: 38px; font-size: 22px; }
+.leaflet-touch .leaflet-bar a { width: 38px; height: 38px; line-height: 38px; }
+/* Los botones + y − van a la derecha, debajo de "Cerca de mí" */
+.p24-lienzo .leaflet-top.leaflet-right { top: 54px; }
+@media (max-width: 860px) { .p24-lienzo.con-tarjeta .leaflet-control-zoom { display: none; } }
+
+/* ---------- Pines ---------- */
+.p24-marca { background: none; border: 0; }
+/* Punto exacto: gota que señala el lugar */
+.p24-pin { --c: var(--orange); position: absolute; top: 0; left: 0; width: 38px; height: 38px; display: grid; place-items: center; background: #fff; border: 3px solid var(--c); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 3px 8px rgba(0, 0, 0, .35); transition: transform .15s; }
+.p24-pin > span { transform: rotate(45deg); font-size: 19px; line-height: 1; }
+/* Zona aproximada: círculo punteado (no señala un punto exacto) */
+.p24-zona { --c: var(--orange); position: absolute; top: 0; left: 0; width: 38px; height: 38px; display: grid; place-items: center; background: #fff; border: 3px dashed var(--c); border-radius: 50%; box-shadow: 0 3px 8px rgba(0, 0, 0, .3); transition: transform .15s; }
+.p24-zona > span { font-size: 19px; line-height: 1; }
+.p24-pin.es-viejo, .p24-zona.es-viejo { filter: grayscale(1); opacity: .72; }
+.es-activo .p24-pin { transform: rotate(-45deg) scale(1.2); }
+.es-activo .p24-zona { transform: scale(1.2); }
+.p24-marca:focus-visible { outline: none; }
+.p24-marca:focus-visible .p24-pin, .p24-marca:focus-visible .p24-zona { box-shadow: 0 0 0 4px var(--orange); }
+/* "Aquí estás" */
+.p24-yo { display: block; width: 22px; height: 22px; border-radius: 50%; background: #2563eb; border: 3px solid #fff; box-shadow: 0 0 0 2px rgba(37, 99, 235, .35), 0 2px 6px rgba(0, 0, 0, .35); }
+
+/* ---------- Botón "Cerca de mí" y avisos sobre el mapa ---------- */
+.p24-cerca { position: absolute; top: 10px; right: 10px; z-index: 1050; display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 15px; border: 0; border-radius: 100px; background: #fff; color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; box-shadow: 0 2px 8px rgba(0, 0, 0, .3); cursor: pointer; }
+.p24-cerca i { color: #2563eb; }
+.p24-cerca:disabled { opacity: .7; cursor: progress; }
+.p24-cerca.es-buscando i { animation: p24-gira 1s linear infinite; }
+@keyframes p24-gira { to { transform: rotate(360deg); } }
+.p24-aviso { position: absolute; top: 10px; left: 10px; z-index: 1060; max-width: calc(100% - 172px); margin: 0; padding: 10px 14px; border-radius: 14px; background: var(--ink); color: #fff; font-size: 14px; line-height: 1.35; box-shadow: 0 6px 16px rgba(0, 0, 0, .3); }
+.p24-aviso[hidden] { display: none; }
+
+/* ---------- Tarjeta del puesto (sube desde abajo) ----------
+   Deja libre la franja inferior para que el crédito del mapa siga visible. */
+.p24-tarjeta { position: absolute; left: 10px; right: 10px; bottom: 26px; z-index: 1100; display: grid; gap: 10px; max-height: calc(100% - 96px); overflow-y: auto; padding: 14px 16px 12px; border-radius: 18px; background: #fff; box-shadow: 0 10px 30px rgba(0, 0, 0, .3); animation: p24-sube .18s ease-out; }
+.p24-tarjeta[hidden] { display: none; }
+@keyframes p24-sube { from { transform: translateY(14px); opacity: 0; } }
+.p24-t-cab { display: grid; grid-template-columns: 44px minmax(0, 1fr) 40px; gap: 12px; align-items: center; }
+.p24-t-ico { --c: var(--orange); width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 3px solid var(--c); font-size: 21px; line-height: 1; }
+.p24-t-tit small { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+.p24-t-tit h3 { font-size: 19px; line-height: 1.2; overflow-wrap: anywhere; }
+.p24-t-x { width: 40px; height: 40px; border: 0; border-radius: 50%; background: #f4f2ef; color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer; }
+.p24-t-x:hover { background: var(--line); }
+.p24-t-sello { justify-self: start; padding: 3px 11px; border-radius: 100px; font-size: 13px; font-weight: 700; }
+.p24-t-sello.es-ejemplo { background: var(--orange-wash); color: var(--orange-deep); }
+.p24-t-sello.es-viejo { background: #f4f2ef; color: var(--muted); }
+.p24-t-datos { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 15.5px; line-height: 1.35; }
+.p24-t-datos li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; }
+.p24-t-datos i { margin-top: 3px; color: var(--orange-deep); text-align: center; font-size: 15px; }
+.p24-t-datos em { display: block; font-style: normal; font-size: 13.5px; color: var(--muted); }
+.p24-t-btns { display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; }
+.p24-t-btns .btn { height: 46px; padding: 0 12px; font-size: 15px; }
+.p24-t-pie { display: grid; gap: 6px; padding-top: 9px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.35; }
+.p24-t-cta { color: var(--orange-deep); font-weight: 600; text-decoration: none; }
+.p24-t-cta:hover { text-decoration: underline; }
+.p24-t-rep { justify-self: start; color: var(--muted); }
+
+/* ---------- Textos bajo el mapa ---------- */
+.p24-conteo, .p24-nota { margin: 0; padding: 0 max(20px, env(safe-area-inset-right)) 0 max(20px, env(safe-area-inset-left)); font-size: 14px; line-height: 1.45; color: var(--muted); }
+.p24-conteo { padding-top: 12px; color: var(--ink); font-weight: 600; }
+.p24-nota { padding-top: 6px; }
+.p24-nota i { margin-right: 4px; }
+
+/* ---------- Gancho: aparecer gratis ---------- */
+.p24-alta { margin-top: 28px; background: var(--orange-wash); padding-block: 30px; }
+.p24-alta-in { display: grid; gap: 16px; }
+.p24-alta h2 { font-size: clamp(27px, 6.2vw, 40px); line-height: 1; }
+.p24-alta p { margin-top: 8px; color: #4b453f; font-size: 16px; max-width: 54ch; }
+.p24-alta .btn { justify-self: start; }
+
+/* ---------- Modo revisión (?revisar=1) ---------- */
+.p24-revisar { margin: 16px 20px 0; padding: 14px 16px; border: 2px dashed var(--orange); border-radius: 12px; background: #fff; font-size: 14px; line-height: 1.45; }
+.p24-revisar[hidden] { display: none; }
+.p24-revisar h2 { font-size: 24px; }
+.p24-revisar p { margin-top: 4px; color: var(--muted); }
+.p24-revisar ul { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 4px; }
+.p24-revisar .es-error { color: #b91c1c; font-weight: 600; }
+.p24-revisar .es-ok { color: #136c39; font-weight: 600; }
+.p24-coord { margin: 0; font: 600 13px/1.5 ui-monospace, Menlo, Consolas, monospace; user-select: all; }
+
+/* ---------- Pantallas anchas ---------- */
+@media (min-width: 861px) {
+  .p24-cab { padding-top: 34px; padding-bottom: 16px; }
+  .p24-cab .lede { font-size: 18px; }
+  .p24-marco { padding: 0 20px; }
+  .p24-chips { padding: 2px 0 14px; flex-wrap: wrap; overflow: visible; }
+  .p24-lienzo { height: clamp(440px, calc(100vh - 350px), 640px); border: 2px solid var(--ink); border-radius: 20px; }
+  .p24-tarjeta { left: 14px; right: auto; bottom: 14px; width: 380px; max-height: calc(100% - 28px); }
+  .p24-conteo, .p24-nota { padding-left: 0; padding-right: 0; }
+  .p24-revisar { margin-left: 0; margin-right: 0; }
+  .p24-alta { margin-top: 44px; padding-block: 44px; }
+  .p24-alta-in { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 32px; }
+  .p24-alta .btn { justify-self: end; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p24-tarjeta { animation: none; }
+  .p24-cerca.es-buscando i { animation: none; }
+}

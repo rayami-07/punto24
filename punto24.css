@@ -10,6 +10,9 @@
 .p24-cab h1 { font-family: var(--display); font-weight: 900; text-transform: uppercase; font-size: clamp(42px, 10vw, 76px); line-height: .88; letter-spacing: -.5px; }
 .p24-cab h1 span { color: var(--orange); }
 .p24-cab .lede { margin-top: 8px; font-size: 16px; line-height: 1.4; }
+.p24-ir-alta { display: inline-block; margin-top: 6px; font-weight: 700; color: var(--orange); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.p24-ir-alta i { font-size: 12px; margin-left: 2px; }
+.p24-alta { scroll-margin-top: 80px; }
 .p24-demo { margin-top: 12px; background: var(--orange-wash); border-left: 4px solid var(--orange); border-radius: 6px; padding: 9px 12px; font-size: 14px; line-height: 1.4; }
 .p24-demo[hidden] { display: none; }
 
@@ -116,7 +119,7 @@
   .p24-cab .lede { font-size: 18px; }
   .p24-marco { padding: 0 20px; }
   .p24-chips { padding: 2px 0 14px; flex-wrap: wrap; overflow: visible; }
-  .p24-lienzo { height: clamp(440px, calc(100vh - 350px), 640px); border: 2px solid var(--ink); border-radius: 20px; }
+  .p24-lienzo { height: clamp(440px, calc(100vh - 362px), 640px); border: 2px solid var(--ink); border-radius: 20px; }
   .p24-tarjeta { left: 14px; right: auto; bottom: 14px; width: 380px; max-height: calc(100% - 28px); }
   .p24-conteo, .p24-nota { padding-left: 0; padding-right: 0; }
   .p24-revisar { margin-left: 0; margin-right: 0; }
